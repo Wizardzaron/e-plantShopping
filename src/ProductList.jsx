@@ -261,7 +261,6 @@ const handleAddToCart = (plant) => {
 }
 
    const handleContinueShopping = (e) => {
-    e.preventDefault();
     setShowCart(false);
   };
     return (
