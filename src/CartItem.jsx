@@ -15,15 +15,30 @@ const CartItem = ({ onContinueShopping }) => {
  
     let totalAmount = 0
 
-    cart.map(item => (
-      totalAmount += item.cost * item.quantity
-    ))
+    cart.map((item) => {
+    let itemCost = item.cost.replace("$", "");
+      let itemQuantity = item.quantity;
+      totalAmount += itemCost * itemQuantity;
+    })
 
     return totalAmount
   };
 
+  const numberOfItemsInCart = () => {
+
+    let count = 0;
+
+    cart.forEach(item => {
+      count += item.quantity;
+    });
+
+    return count;
+
+  }
+
+
   const handleContinueShopping = (e) => {
-      // setShowCarts(false);
+      onContinueShopping();
   };
 
   const handleCheckoutShopping = (e) => {
@@ -31,16 +46,20 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const handleIncrement = (item) => {
-    dispatch(updateQuantity(item.quantity));
+    //needed to create a new object since you can't assign values to read only properties like item.quantity
+
+    const updateItem = { ...item, quantity: item.quantity + 1};
+    dispatch(updateQuantity(updateItem));
   };
 
   const handleDecrement = (item) => {
 
-    if (item && item.quantity == 0){
+    if (item && item.quantity === 0){
       dispatch(removeItem(item.name));
     }
     else {
-      dispatch(updateQuantity(item.quantity));
+      const updateItem = { ...item, quantity: item.quantity - 1};
+      dispatch(updateQuantity(updateItem));
     }
     
   };
@@ -52,7 +71,11 @@ const CartItem = ({ onContinueShopping }) => {
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
     let totalCost = 0;
-    totalCost = item.quantity * item.price
+    console.log("Comes from calculateTotalCost: " , item);
+
+    let itemCost = item.cost.replace("$", "");
+    
+    totalCost = item.quantity * itemCost
     console.log(totalCost);
     return totalCost
   };
@@ -78,7 +101,7 @@ const CartItem = ({ onContinueShopping }) => {
           </div>
         ))}
       </div>
-      <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'>     </div>
+      <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'>  {numberOfItemsInCart()}   </div>
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
